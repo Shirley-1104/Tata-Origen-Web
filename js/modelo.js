@@ -1,6 +1,6 @@
 // DATOS Y REFERENCIAS
-
 // Modelo 
+
 let productos = [
     {
         id: 1,
@@ -103,6 +103,10 @@ let productos = [
     }
 ];
 
+// carrito
+let carrito = [];
+
+//Almacenamiento
 const CLAVE_PRODUCTOS = "tataOrigen_productos";
 
 
@@ -126,11 +130,109 @@ function guardarProductos() {
 
 productos = cargarProductos();
 
-
+//consultas
 function obtenerProductos() {
     return productos;
 }
 
+//Consultar cantidad de una variante en el carrito 
+function ObtenerCantidadEnCarrito(productoId, variante){
+    const productoCarrito = carrito.find(
+        (item) => item.productoId == productoId &&
+                    item.variante === variante
+    );
+
+    return productoCarrito ? productoCarrito.cantidad : 0;
+}
+
+//Obtener resumen del carrito 
+function obtenerResumenCarrito(){
+    const productosDiferentes = carrito.filter(
+        (item) => item.cantidad > 0
+    ).length;
+
+    const totalUnidades = carrito.reduce(
+        (total, item) => total + item.cantidad, 0
+    );
+
+    const total = carrito.reduce(
+        (acumulado, item) => acumulado + item.precio * item.cantidad, 0
+    );
+
+    return {
+        productosDiferentes,
+        totalUnidades,
+        total
+    };
+}
+
+
+// Obtener productos con disponibilidad calculada
+function obtenerProductosParaVista() {
+    return productos.map((producto) => {
+        const productoVista = { ...producto };
+
+        // Productos con presentaciones
+        if (producto.presentaciones) {
+            productoVista.presentaciones =
+                producto.presentaciones.map((presentacion) => {
+                    const cantidad = obtenerCantidadEnCarrito(
+                        producto.id, presentacion.nombre
+                    );
+
+                    return {
+                        ...presentacion,
+                        stockDisponible: presentacion.stock - cantidad
+                    };
+                });
+
+            productoVista.agotado =
+                productoVista.presentaciones.every(
+                    (presentacion) => presentacion.stockDisponible <= 0
+                );
+        }
+
+        // Productos con sabores
+        else if (producto.sabores) {
+            productoVista.sabores =
+                producto.sabores.map((sabor) => {
+                    const cantidad = obtenerCantidadEnCarrito(
+                        producto.id,
+                        sabor.nombre
+                    );
+
+                    return {
+                        ...sabor,
+                        stockDisponible: sabor.stock - cantidad
+                    };
+                });
+
+            productoVista.agotado =
+                productoVista.sabores.every(
+                    (sabor) => sabor.stockDisponible <= 0
+                );
+        }
+
+        // Productos sin variantes
+        else {
+            const cantidad = obtenerCantidadEnCarrito(
+                producto.id,
+                null
+            );
+
+            productoVista.stockDisponible =
+                producto.stock - cantidad;
+
+            productoVista.agotado =
+                productoVista.stockDisponible <= 0;
+        }
+
+        return productoVista;
+    });
+}
+
+
+//Validaciones
 function validar(producto, idExcluir = null) {
     if (!producto.nombre || !producto.nombre.trim()) {
         return "El nombre del producto es obligatorio.";
@@ -229,3 +331,4 @@ function eliminarProducto(id) {
 
     return true;
 }
+

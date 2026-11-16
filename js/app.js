@@ -1,6 +1,3 @@
-// carrito
-let carrito = [];
-
 // estado del formulario
 let modoPedido = false;
 
@@ -2066,6 +2063,7 @@ document.addEventListener(
         configurarVaciarCarrito();
         configurarRealizarPedido();
         configurarFormulario();
+        configurarEventosCatalogo();
         mostrarResumenPedido();
         actualizarResumen();
         activarModoContacto();

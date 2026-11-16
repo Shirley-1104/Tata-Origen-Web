@@ -1,5 +1,4 @@
-// controlador
-
+// controlador 
 function cargarCatalogoCRUD() {
     mostrarProductos(obtenerProductos());
 }
@@ -65,4 +64,24 @@ function configurarCrearProductoCRUD() {
             alert("Producto agregado correctamente.");
         }
     });
+}
+
+//Eventos del catalogo
+function configurarEventosCatalogo(){
+    const contenedor = document.getElementById("lista-productos");
+
+    if (!contenedor) return;
+
+    contenedor.addEventListener("click", function(event){
+        const boton = event.target.closest(
+            'button[data-accion="agregar"]');
+
+            if (!boton) return;
+
+            const idProducto = Number(boton.dataset.id);
+
+            seleccionarProducto(idProducto);
+    });
+
+    
 }

@@ -3,41 +3,6 @@ let modoPedido = false;
 
 
 // FUNCIONES AUXILIARES
-
-// actualiza el resumen del carrito
-function actualizarResumen() {
-    const productosDiferentes = document.getElementById("total-productos");
-    const totalUnidades = document.getElementById("total-unidades");
-    const totalCarrito = document.getElementById("resumen-total");
-
-    if (
-        !productosDiferentes ||
-        !totalUnidades ||
-        !totalCarrito
-    ) {
-        return;
-    }
-
-    const cantidadProductos = carrito.filter(
-        (item) => item.cantidad > 0
-    ).length;
-
-    const cantidadUnidades = carrito.reduce(
-        (total, item) => total + item.cantidad, 0
-    );
-
-    const valorTotal = carrito.reduce(
-        (total, item) => total +
-            (item.precio * item.cantidad),
-        0
-    );
-
-    productosDiferentes.textContent = cantidadProductos;
-    totalUnidades.textContent = cantidadUnidades;
-    totalCarrito.textContent = `$${valorTotal.toLocaleString("es-CO")}`;
-}
-
-
 // mensajes en la pagina
 function mostrarMensaje(mensaje) {
     const mensajeFormulario = document.getElementById(
@@ -139,66 +104,24 @@ function activarModoPedido() {
 }
 
 
-// agrega un producto al carrito
-function agregarAlCarrito(
-    productoId, variante, precio
-) {
-    const itemExistente =
-        carrito.find(
-            (item) =>
-                item.productoId === productoId &&
-                item.variante === variante
-        );
-
-    if (itemExistente) {
-        itemExistente.cantidad++;
-    } else {
-        carrito.push({
-            productoId: productoId,
-            variante: variante,
-            precio: precio,
-            cantidad: 1
-        });
-    }
-}
-
-
-// obtener la cantidad de una variante
-function obtenerCantidadEnCarrito(
-    productoId, variante
-) {
-    const productoCarrito =
-        carrito.find(
-            (item) =>
-                item.productoId === productoId &&
-                item.variante === variante
-        );
-
-    return productoCarrito
-        ? productoCarrito.cantidad
-        : 0;
-}
-
-
 // FUNCIONES DE DIBUJO
-
 // buscar productos
 function buscarProductos() {
     const buscador = document.getElementById(
-            "buscador-productos"
-        );
+        "buscador-productos"
+    );
 
     const contador = document.getElementById(
-            "contador-resultados"
-        );
+        "contador-resultados"
+    );
 
     if (!buscador || !contador) {
         return [];
     }
 
     const textoBusqueda = buscador.value
-            .trim()
-            .toLowerCase();
+        .trim()
+        .toLowerCase();
 
     if (textoBusqueda === "") {
         mostrarProductos(productos);
@@ -249,8 +172,8 @@ function buscarProductos() {
 // muestra tabla resumen
 function mostrarTablaResumen() {
     const tabla = document.getElementById(
-            "tabla-productos"
-        );
+        "tabla-productos"
+    );
 
     if (!tabla) {
         return;
@@ -261,24 +184,24 @@ function mostrarTablaResumen() {
     productos.forEach(
         (producto) => {
             const fila = document.createElement(
-                    "tr"
-                );
+                "tr"
+            );
 
             const nombre = document.createElement(
-                    "td"
-                );
+                "td"
+            );
 
             nombre.textContent = producto.nombre;
 
             const categoria = document.createElement(
-                    "td"
-                );
+                "td"
+            );
 
             categoria.textContent = producto.categoria;
 
             const stock = document.createElement(
-                    "td"
-                );
+                "td"
+            );
 
             if (
                 producto.stock !==
@@ -302,12 +225,12 @@ function mostrarTablaResumen() {
                 producto.sabores
             ) {
                 stock.textContent = producto.sabores.reduce(
-                        (
-                            total, sabor
-                        ) =>
-                            total + sabor.stock,
-                        0
-                    );
+                    (
+                        total, sabor
+                    ) =>
+                        total + sabor.stock,
+                    0
+                );
             }
 
             fila.appendChild(
@@ -333,16 +256,16 @@ function mostrarTablaResumen() {
 // mostrar el carrito
 function mostrarCarrito() {
     const contenedor = document.getElementById(
-            "contenido-carrito"
-        );
+        "contenido-carrito"
+    );
 
     const totalElemento = document.getElementById(
-            "total-carrito"
-        );
+        "total-carrito"
+    );
 
     const botonPedido = document.getElementById(
-            "realizar-pedido"
-        );
+        "realizar-pedido"
+    );
 
     if (
         !contenedor ||
@@ -370,8 +293,8 @@ function mostrarCarrito() {
         totalElemento.textContent = "0";
 
         const panelAgregar = document.getElementById(
-                "agregar-productos"
-            );
+            "agregar-productos"
+        );
 
         if (panelAgregar) {
             panelAgregar.hidden = true;
@@ -381,7 +304,7 @@ function mostrarCarrito() {
             botonPedido.disabled = true;
         }
 
-        actualizarResumen();
+        mostrarResumen(obtenerResumenCarrito());
         return;
     }
 
@@ -406,8 +329,8 @@ function mostrarCarrito() {
             total += subtotal;
 
             const tarjeta = document.createElement(
-                    "div"
-                );
+                "div"
+            );
 
             tarjeta.classList.add(
                 "item-carrito"
@@ -627,15 +550,15 @@ function mostrarCarrito() {
             false;
     }
 
-    actualizarResumen();
+    mostrarResumen(obtenerResumenCarrito());
 }
 
 
 // muestra el resumen del pedido
 function mostrarResumenPedido() {
     const resumen = document.getElementById(
-            "resumen-pedido"
-        );
+        "resumen-pedido"
+    );
 
     if (!resumen) {
         return;
@@ -862,8 +785,8 @@ function mostrarOpcionesAgregarProductos() {
                                 const disponible = presentacion.stock - cantidad;
 
                                 const boton = document.createElement(
-                                        "button"
-                                    );
+                                    "button"
+                                );
 
                                 boton.type = "button";
 
@@ -876,8 +799,8 @@ function mostrarOpcionesAgregarProductos() {
                                 boton.dataset.precio = presentacion.precio;
 
                                 const nombre = document.createElement(
-                                        "strong"
-                                    );
+                                    "strong"
+                                );
 
                                 nombre.textContent = presentacion.nombre;
 
@@ -997,100 +920,30 @@ function mostrarOpcionesAgregarProductos() {
 }
 
 
-// aumenta la cantidad de un producto
+// Aumentar cantidad desde la interfaz
 function aumentarCantidad(index) {
-    const item = carrito[index];
+    const resultado = incrementarCantidadCarrito(index);
 
-    if (!item) {
+    if (!resultado.exito) {
+        mostrarMensaje(resultado.mensaje);
         return;
     }
-
-    const producto = productos.find(
-        (productoActual) =>
-            productoActual.id ===
-            item.productoId
-    );
-
-    if (!producto) {
-        return;
-    }
-
-    let stock = 0;
-
-
-    // stock de presentacion
-    if (producto.presentaciones) {
-        const presentacion = producto.presentaciones.find(
-            (p) =>
-                p.nombre ===
-                item.variante
-        );
-
-        if (!presentacion) {
-            return;
-        }
-
-        stock = presentacion.stock;
-    }
-
-
-    // stock de sabor
-    else if (producto.sabores) {
-        const sabor = producto.sabores.find(
-            (s) =>
-                s.nombre === item.variante
-        );
-
-        if (!sabor) {
-            return;
-        }
-
-        stock = sabor.stock;
-    }
-
-
-    // stock de producto simple
-    else {
-        stock = producto.stock;
-    }
-
-
-    // validar stock
-    if (
-        item.cantidad >= stock
-    ) {
-        mostrarMensaje(
-            "No puedes agregar más unidades. Has alcanzado el stock disponible."
-        );
-        return;
-    }
-
-    item.cantidad++;
 
     mostrarCarrito();
-    mostrarProductos(productos);
+    mostrarProductos(obtenerProductosParaVista());
 }
 
 
-// disminuye la cantidad de un producto
+// Disminuir cantidad desde la interfaz
 function disminuirCantidad(index) {
-    const item = carrito[index];
+    const actualizado = reducirCantidadCarrito(index);
 
-    if (!item) {
+    if (!actualizado) {
         return;
     }
 
-    if (item.cantidad > 1) {
-        item.cantidad--;
-    } else {
-        carrito.splice(
-            index,
-            1
-        );
-    }
-
     mostrarCarrito();
-    mostrarProductos(productos);
+    mostrarProductos(obtenerProductosParaVista());
 }
 
 
@@ -1262,18 +1115,15 @@ function configurarEventosCarrito() {
                 );
             }
 
-            if (
-                accion === "eliminar"
-            ) {
-                carrito.splice(
-                    index,
-                    1
-                );
+            if (accion === "eliminar") {
+                const eliminado = eliminarDelCarrito(index);
+
+                if (!eliminado) {
+                    return;
+                }
 
                 mostrarCarrito();
-                mostrarProductos(
-                    productos
-                );
+                mostrarProductos(obtenerProductosParaVista());
             }
         }
     );
@@ -1440,9 +1290,7 @@ function configurarEventosCarrito() {
             item.precio = nuevoPrecio;
 
             mostrarCarrito();
-            mostrarProductos(
-                productos
-            );
+            mostrarProductos(obtenerProductosParaVista());
         }
     );
 }
@@ -1656,8 +1504,7 @@ function vaciarCarrito() {
 function seleccionarProducto(idProducto) {
     const producto = productos.find(
         (productoActual) =>
-            productoActual.id ===
-            idProducto
+            productoActual.id === idProducto
     );
 
     if (!producto) {
@@ -1688,9 +1535,7 @@ function seleccionarProducto(idProducto) {
                 "Todas las presentaciones de este producto están agotadas."
             );
 
-            mostrarProductos(
-                productos
-            );
+            mostrarProductos(obtenerProductosParaVista());
 
             return;
         }
@@ -1726,9 +1571,7 @@ function seleccionarProducto(idProducto) {
                 "Todos los sabores de este producto están agotados."
             );
 
-            mostrarProductos(
-                productos
-            );
+            mostrarProductos(obtenerProductosParaVista());
 
             return;
         }
@@ -1756,9 +1599,7 @@ function seleccionarProducto(idProducto) {
                 "Este producto está agotado."
             );
 
-            mostrarProductos(
-                productos
-            );
+            mostrarProductos(obtenerProductosParaVista());
 
             return;
         }
@@ -1773,9 +1614,7 @@ function seleccionarProducto(idProducto) {
 
     // actualizar vistas
     mostrarCarrito();
-    mostrarProductos(
-        productos
-    );
+    mostrarProductos(obtenerProductosParaVista());
 }
 
 
@@ -2054,7 +1893,7 @@ function configurarEditarProductos() {
 document.addEventListener(
     "DOMContentLoaded",
     () => {
-        mostrarProductos(productos);
+        mostrarProductos(obtenerProductosParaVista());
         mostrarCarrito();
         configurarBuscador();
         configurarEliminarProductos();
@@ -2065,7 +1904,7 @@ document.addEventListener(
         configurarFormulario();
         configurarEventosCatalogo();
         mostrarResumenPedido();
-        actualizarResumen();
+        mostrarResumen(obtenerResumenCarrito());
         activarModoContacto();
         mostrarTablaResumen();
         configurarEditarProductos();

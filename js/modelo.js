@@ -106,6 +106,143 @@ let productos = [
 // carrito
 let carrito = [];
 
+//Agregar productos al carrito
+function agregarAlCarrito(productoId, variante, precio){
+    const itemExistente = carrito.find(
+        (item) => item.productoId === productoId &&
+        item.variante === variante
+    );
+
+    if (itemExistente){
+        itemExistente.cantidad++;
+    }else{
+        carrito.push({
+            productoId: productoId,
+            variante: variante,
+            precio: precio,
+            cantidad: 1
+        });
+    }
+}
+
+//Consulta cantidad de una variante
+function obtenerCantidadEnCarrito(productoId, variante){
+    const productoCarrito = carrito.find(
+        (item) => item.productoId === productoId &&
+        item.variante === variante
+    );
+
+    return productoCarrito ? productoCarrito.cantidad : 0;
+}
+
+// Aumentar la cantidad de un producto en el carrito
+function incrementarCantidadCarrito(index) {
+    const item = carrito[index];
+
+    if (!item) {
+        return {
+            exito: false,
+            mensaje: "No se encontró el producto en el carrito."
+        };
+    }
+
+    const producto = productos.find(
+        (productoActual) => productoActual.id === item.productoId
+    );
+
+    if (!producto) {
+        return {
+            exito: false,
+            mensaje: "No se encontró el producto en el catálogo."
+        };
+    }
+
+    let stock;
+
+    // Consultar stock de presentaciones
+    if (producto.presentaciones) {
+        const presentacion = producto.presentaciones.find(
+            (p) => p.nombre === item.variante
+        );
+
+        if (!presentacion) {
+            return {
+                exito: false,
+                mensaje: "No se encontró la presentación seleccionada."
+            };
+        }
+
+        stock = presentacion.stock;
+    }
+
+    // Consultar stock de sabores
+    else if (producto.sabores) {
+        const sabor = producto.sabores.find(
+            (s) => s.nombre === item.variante
+        );
+
+        if (!sabor) {
+            return {
+                exito: false,
+                mensaje: "No se encontró el sabor seleccionado."
+            };
+        }
+
+        stock = sabor.stock;
+    }
+
+    // Consultar stock de productos simples
+    else {
+        stock = producto.stock;
+    }
+
+    if (!Number.isFinite(stock)) {
+        return {
+            exito: false,
+            mensaje: "El stock de este producto no es válido."
+        };
+    }
+
+    if (item.cantidad >= stock) {
+        return {
+            exito: false,
+            mensaje: "No puedes agregar más unidades. Has alcanzado el stock disponible."
+        };
+    }
+
+    item.cantidad++;
+
+    return { exito: true };
+}
+
+
+// Disminuir la cantidad de un producto en el carrito
+function reducirCantidadCarrito(index) {
+    const item = carrito[index];
+
+    if (!item) {
+        return false;
+    }
+
+    if (item.cantidad > 1) {
+        item.cantidad--;
+    } else {
+        carrito.splice(index, 1);
+    }
+
+    return true;
+}
+
+// Eliminar un producto del carrito
+function eliminarDelCarrito(index) {
+    if (index < 0 || index >= carrito.length) {
+        return false;
+    }
+
+    carrito.splice(index, 1);
+    return true;
+}
+
 //Almacenamiento
 const CLAVE_PRODUCTOS = "tataOrigen_productos";
 
@@ -133,16 +270,6 @@ productos = cargarProductos();
 //consultas
 function obtenerProductos() {
     return productos;
-}
-
-//Consultar cantidad de una variante en el carrito 
-function ObtenerCantidadEnCarrito(productoId, variante){
-    const productoCarrito = carrito.find(
-        (item) => item.productoId == productoId &&
-                    item.variante === variante
-    );
-
-    return productoCarrito ? productoCarrito.cantidad : 0;
 }
 
 //Obtener resumen del carrito 

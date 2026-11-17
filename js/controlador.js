@@ -1,6 +1,6 @@
 // controlador 
 function cargarCatalogoCRUD() {
-    mostrarProductos(obtenerProductos());
+    mostrarProductos(obtenerProductosParaVista());
 }
 
 function crearProductoCRUD(producto) {
@@ -83,5 +83,5 @@ function configurarEventosCatalogo(){
             seleccionarProducto(idProducto);
     });
 
-    
+
 }

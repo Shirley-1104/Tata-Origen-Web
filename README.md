@@ -4,12 +4,6 @@ Aplicación web desarrollada como proyecto académico para la asignatura **Herra
 
 Tata Origen permite consultar un catálogo de productos de repostería, administrar productos e inventario, gestionar un carrito de compras y preparar pedidos para enviarlos mediante WhatsApp. Además, integra una API externa para mostrar recetas de postres como contenido de inspiración.
 
-## Integrantes
-
-- [Nombre del integrante 1]
-- [Nombre del integrante 2]
-- [Nombre del integrante 3]
-
 ## Tecnologías utilizadas
 
 - **HTML5:** estructura de la aplicación.

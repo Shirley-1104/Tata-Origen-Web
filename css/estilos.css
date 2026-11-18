@@ -1927,3 +1927,61 @@ footer p:last-child {
 .btn-editar:active {
     transform: scale(0.98);
 }
+
+/* INSPIRACION DULCE */
+
+.seccion-inspiracion {
+    padding: 45px 5%;
+    background-color: var(--crema);
+}
+
+.seccion-inspiracion .contenedor {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+#lista-inspiracion {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    margin-top: 25px;
+}
+
+.tarjeta-inspiracion {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s ease;
+}
+
+.tarjeta-inspiracion:hover {
+    transform: translateY(-5px);
+}
+
+.tarjeta-inspiracion img {
+    width: 100%;
+    height: 170px;
+    object-fit: cover;
+    display: block;
+}
+
+.tarjeta-inspiracion h3 {
+    padding: 12px;
+    margin: 0;
+    font-size: 17px;
+    color: var(--morado-principal);
+}
+
+/* Adaptacion a dispositivos pequeños */
+
+@media (max-width: 768px) {
+    #lista-inspiracion {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+
+    .tarjeta-inspiracion img {
+        height: 130px;
+    }
+}

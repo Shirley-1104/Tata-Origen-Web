@@ -105,62 +105,40 @@ function activarModoPedido() {
 
 
 // FUNCIONES DE DIBUJO
-// buscar productos
+// buscar productos en el catalogo
 function buscarProductos() {
-    const buscador = document.getElementById(
-        "buscador-productos"
-    );
-
-    const contador = document.getElementById(
-        "contador-resultados"
-    );
+    const buscador = document.getElementById("buscador-productos");
+    const contador = document.getElementById("contador-resultados");
 
     if (!buscador || !contador) {
         return [];
     }
 
-    const textoBusqueda = buscador.value
-        .trim()
-        .toLowerCase();
+    // Obtener productos con el stock disponible calculado
+    const listaProductos = obtenerProductosParaVista();
 
-    if (textoBusqueda === "") {
-        mostrarProductos(productos);
+    const textoBusqueda = buscador.value.trim().toLowerCase();
 
-        contador.textContent = `${productos.length} productos`;
+    const resultados = textoBusqueda === ""
+        ? listaProductos
+        : listaProductos.filter((producto) => {
+            const nombre = producto.nombre.toLowerCase();
+            const categoria = producto.categoria.toLowerCase();
+            const descripcion = producto.descripcion.toLowerCase();
 
-        return productos;
-    }
-
-    const resultados =
-        productos.filter(
-            (producto) => {
-                const nombre = producto.nombre.toLowerCase();
-
-                const categoria = producto.categoria.toLowerCase();
-
-                const descripcion = producto.descripcion.toLowerCase();
-
-                return (
-                    nombre.includes(
-                        textoBusqueda
-                    ) ||
-                    categoria.includes(
-                        textoBusqueda
-                    ) ||
-                    descripcion.includes(
-                        textoBusqueda
-                    )
-                );
-            }
-        );
+            return nombre.includes(textoBusqueda) ||
+                categoria.includes(textoBusqueda) ||
+                descripcion.includes(textoBusqueda);
+        });
 
     mostrarProductos(resultados);
 
-    if (resultados.length === 0) {
-        contador.textContent =
-            "0 coincidencias";
+    if (textoBusqueda === "") {
+        contador.textContent = `${resultados.length} productos`;
     } else {
-        contador.textContent = `${resultados.length} resultado(s)`;
+        contador.textContent = resultados.length === 0
+            ? "0 coincidencias"
+            : `${resultados.length} resultado(s)`;
     }
 
     return resultados;
@@ -1130,169 +1108,27 @@ function configurarEventosCarrito() {
 
 
     // eventos de variantes
-    contenedor.addEventListener(
-        "change",
-        function (event) {
-            if (
-                !event.target.classList.contains(
-                    "selector-variante"
-                )
-            ) {
-                return;
-            }
+    contenedor.addEventListener("change", function (event) {
 
-            const select = event.target;
-
-            const index = Number(
-                select.dataset.index
-            );
-
-            const nuevaVariante = select.value;
-            const item = carrito[index];
-
-            if (!item) {
-                return;
-            }
-
-            const producto = productos.find(
-                (productoActual) =>
-                    productoActual.id ===
-                    item.productoId
-            );
-
-            if (!producto) {
-                return;
-            }
-
-            let nuevoPrecio = item.precio;
-
-
-            // cambiar presentacion
-            if (
-                producto.presentaciones
-            ) {
-                const presentacion = producto.presentaciones.find(
-                    (p) =>
-                        p.nombre ===
-                        nuevaVariante
-                );
-
-                if (!presentacion) {
-                    return;
-                }
-
-
-                // verificar variante repetida
-                const otroItem = carrito.find(
-                    (
-                        otro,
-                        otroIndex
-                    ) =>
-                        otro.productoId ===
-                        producto.id &&
-                        otro.variante ===
-                        nuevaVariante &&
-                        otroIndex !==
-                        index
-                );
-
-                if (otroItem) {
-                    const cantidadTotal =
-                        otroItem.cantidad +
-                        item.cantidad;
-
-                    if (
-                        cantidadTotal >
-                        presentacion.stock
-                    ) {
-                        mostrarMensaje(
-                            "No hay suficiente stock para unir estas cantidades."
-                        );
-
-                        mostrarCarrito();
-
-                        return;
-                    }
-
-                    otroItem.cantidad = cantidadTotal;
-
-                    carrito.splice(
-                        index,
-                        1
-                    );
-
-                    mostrarCarrito();
-                    return;
-                }
-
-                nuevoPrecio = presentacion.precio;
-            }
-
-
-            // cambiar sabor
-            if (
-                producto.sabores
-            ) {
-                const sabor = producto.sabores.find(
-                    (s) =>
-                        s.nombre ===
-                        nuevaVariante
-                );
-
-                if (!sabor) {
-                    return;
-                }
-
-
-                // verificar variante repetida
-                const otroItem = carrito.find(
-                    (
-                        otro,
-                        otroIndex
-                    ) =>
-                        otro.productoId ===
-                        producto.id &&
-                        otro.variante ===
-                        nuevaVariante &&
-                        otroIndex !==
-                        index
-                );
-
-                if (otroItem) {
-                    const cantidadTotal = otroItem.cantidad + item.cantidad;
-
-                    if (
-                        cantidadTotal > sabor.stock
-                    ) {
-                        mostrarMensaje(
-                            "No hay suficiente stock para unir estas cantidades."
-                        );
-
-                        mostrarCarrito();
-                        return;
-                    }
-
-                    otroItem.cantidad = cantidadTotal;
-
-                    carrito.splice(
-                        index,
-                        1
-                    );
-
-                    mostrarCarrito();
-                    return;
-                }
-
-                nuevoPrecio = producto.precio;
-            }
-
-            item.variante = nuevaVariante;
-            item.precio = nuevoPrecio;
-
-            mostrarCarrito();
-            mostrarProductos(obtenerProductosParaVista());
+        if (!event.target.classList.contains("selector-variante")) {
+            return;
         }
-    );
+
+        const index = Number(event.target.dataset.index);
+        const nuevaVariante = event.target.value;
+
+        const resultado = cambiarVarianteCarrito(
+            index,
+            nuevaVariante
+        );
+
+        if (!resultado.exito) {
+            mostrarMensaje(resultado.mensaje);
+        }
+
+        mostrarCarrito();
+        mostrarProductos(obtenerProductosParaVista());
+    });
 }
 
 
@@ -1492,13 +1328,12 @@ function vaciarCarrito() {
         return;
     }
 
-    carrito = [];
+    limpiarCarrito();
 
     mostrarCarrito();
     mostrarResumenPedido();
-    mostrarProductos(productos);
+    mostrarProductos(obtenerProductosParaVista());
 }
-
 
 // selecciona un producto desde el catalogo
 function seleccionarProducto(idProducto) {
@@ -1909,5 +1744,6 @@ document.addEventListener(
         mostrarTablaResumen();
         configurarEditarProductos();
         configurarCrearProductoCRUD();
+        cargarInspiracionDulce();
     }
 );

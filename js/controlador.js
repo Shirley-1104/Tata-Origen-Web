@@ -83,5 +83,18 @@ function configurarEventosCatalogo(){
             seleccionarProducto(idProducto);
     });
 
+}
 
+
+// consultar y cargar recetas de la API
+async function cargarInspiracionDulce() {
+    mostrarCargaAPI();
+
+    try {
+        const recetas = await obtenerPostresAPI();
+        mostrarInspiracion(recetas.slice(0, 4));
+
+    } catch (error) {
+        mostrarErrorAPI();
+    }
 }

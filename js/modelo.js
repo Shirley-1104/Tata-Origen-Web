@@ -243,6 +243,89 @@ function eliminarDelCarrito(index) {
     return true;
 }
 
+// Vaciar todos los productos del carrito
+function limpiarCarrito() {
+    carrito = [];
+}
+
+// Cambiar presentación o sabor de un producto
+function cambiarVarianteCarrito(index, nuevaVariante) {
+    const item = carrito[index];
+
+    if (!item) {
+        return {
+            exito: false,
+            mensaje: "No se encontró el producto en el carrito."
+        };
+    }
+
+    const producto = productos.find(
+        (p) => p.id === item.productoId
+    );
+
+    if (!producto) {
+        return {
+            exito: false,
+            mensaje: "No se encontró el producto."
+        };
+    }
+
+    let variante;
+    let nuevoPrecio;
+    let stock;
+
+    if (producto.presentaciones) {
+        variante = producto.presentaciones.find(
+            (p) => p.nombre === nuevaVariante
+        );
+
+        nuevoPrecio = variante?.precio;
+    } else if (producto.sabores) {
+        variante = producto.sabores.find(
+            (s) => s.nombre === nuevaVariante
+        );
+
+        nuevoPrecio = producto.precio;
+    }
+
+    if (!variante) {
+        return {
+            exito: false,
+            mensaje: "La variante seleccionada no existe."
+        };
+    }
+
+    stock = variante.stock;
+
+    const otroItem = carrito.find(
+        (otro, otroIndex) =>
+            otro.productoId === producto.id &&
+            otro.variante === nuevaVariante &&
+            otroIndex !== index
+    );
+
+    const cantidadTotal = otroItem
+        ? otroItem.cantidad + item.cantidad
+        : item.cantidad;
+
+    if (cantidadTotal > stock) {
+        return {
+            exito: false,
+            mensaje: "No hay suficiente stock para unir estas cantidades."
+        };
+    }
+
+    if (otroItem) {
+        otroItem.cantidad = cantidadTotal;
+        carrito.splice(index, 1);
+    } else {
+        item.variante = nuevaVariante;
+        item.precio = nuevoPrecio;
+    }
+
+    return { exito: true };
+}
+
 //Almacenamiento
 const CLAVE_PRODUCTOS = "tataOrigen_productos";
 

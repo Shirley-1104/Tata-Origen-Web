@@ -38,6 +38,7 @@
         <nav class="side-menu">
             <a href="#inicio">Inicio</a>
             <a href="#catalogo">Catálogo</a>
+            <a href="#inspiracion-dulce">Inspiración dulce</a>
             <a href="#especificaciones">Especificaciones</a>
             <a href="#promociones">Promociones</a>
             <a href="#categorias">Categorías</a>
@@ -125,6 +126,16 @@
                 <button type="button" id="realizar-pedido" class="btn-principal">
                     Realizar pedido
                 </button>
+            </div>
+        </section>
+
+        <section id="inspiracion-dulce" class="seccion-inspiracion">
+            <div class="contenedor">
+                <h2>Inspiración dulce</h2>
+                <p>Descubre recetas de postres para inspirarte.</p>
+
+                <div id="estado-api"></div>
+                <div id="lista-inspiracion" class="productos-grid"></div>
             </div>
         </section>
 
@@ -482,6 +493,7 @@
     </footer>
 
     <script src="js/modelo.js"></script>
+    <script src="js/servicios/api.js"></script>
     <script src="js/vista.js"></script>
     <script src="js/controlador.js"></script>
     <script src="js/app.js"></script>

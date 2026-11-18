@@ -196,13 +196,8 @@ Las siguientes fuentes sirvieron como referencia para implementar funcionalidade
 
 ## Repositorio
 
-Código fuente: [Agregar enlace del repositorio de GitHub].
+Código fuente: https://github.com/Shirley-1104/Tata-Origen-Web.git
 
-## Aplicación publicada
-
-Enlace de acceso: [Agregar enlace de publicación, si está disponible].
-
----
 
 **Proyecto académico — Herramientas de Programación III**  
 Institución Universitaria Pascual Bravo  
